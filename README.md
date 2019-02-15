@@ -16,7 +16,7 @@ let mut dll_data = Vec::new();
 dll_file.read_to_end(&mut dll_data).unwrap();
 let proc = loserland_exec::get_proc("callme", &dll_data) as *const ();
 let callme: extern "C" fn() = unsafe { std::mem::transmute(proc) };
-(code)(); // Hello from plugin!
+(callme)(); // Hello from plugin!
 ```
 ### References
 
