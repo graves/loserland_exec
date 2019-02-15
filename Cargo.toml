@@ -1,0 +1,10 @@
+[package]
+name = "loserland_exec"
+version = "0.1.0"
+authors = ["Thomas Graves"]
+edition = "2018"
+
+[dependencies]
+winapi = { version = "0.3", features = ["memoryapi", "sysinfoapi", "winnt", "libloaderapi", "winbase"] }
+pelite = "0.7.1"
+libc = "0.2.48"
