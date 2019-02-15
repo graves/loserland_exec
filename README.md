@@ -20,5 +20,5 @@ let callme: extern "C" fn() = unsafe { std::mem::transmute(proc) };
 ```
 ### References
 
-https://github.com/fancycode/MemoryModule
-https://github.com/deptofdefense/SalSA/wiki/PE-File-Format
+* https://github.com/fancycode/MemoryModule
+* https://github.com/deptofdefense/SalSA/wiki/PE-File-Format
