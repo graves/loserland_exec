@@ -35,7 +35,7 @@ extern "stdcall" {
 }
 
 pub fn get_proc(name: &str, dll_data: &Vec<u8>) -> FARPROC {
-	let pe = PeFile::from_bytes(&dll_data).unwrap();
+    let pe = PeFile::from_bytes(&dll_data).unwrap();
     let dos_header = pe.dos_header();
     let nt_headers = pe.nt_headers();
 
@@ -50,17 +50,17 @@ pub fn get_proc(name: &str, dll_data: &Vec<u8>) -> FARPROC {
 
     let code: *mut std::ffi::c_void;
     unsafe {
-        code = VirtualAlloc(nt_headers.OptionalHeader.ImageBase as *mut winapi::ctypes::c_void, 
+        code = VirtualAlloc(nt_headers.OptionalHeader.ImageBase as *mut winapi::ctypes::c_void,
             aligned_image_size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE) as *mut std::ffi::c_void;
     }
 
     let headers;
     unsafe {
-        headers = VirtualAlloc(code as *mut winapi::ctypes::c_void, 
+        headers = VirtualAlloc(code as *mut winapi::ctypes::c_void,
             nt_headers.OptionalHeader.SizeOfHeaders as usize, MEM_COMMIT, PAGE_READWRITE);
     }
 
-    let mut result = MemoryModule { 
+    let mut result = MemoryModule {
         headers: headers as PIMAGE_NT_HEADERS,
         code_base: code,
         initialized: false,
@@ -73,7 +73,7 @@ pub fn get_proc(name: &str, dll_data: &Vec<u8>) -> FARPROC {
 
     let dos_headerp = dos_header as *const _;
     unsafe {
-        libc::memcpy(headers as *mut libc::c_void, dos_headerp as *const libc::c_void, 
+        libc::memcpy(headers as *mut libc::c_void, dos_headerp as *const libc::c_void,
             nt_headers.OptionalHeader.SizeOfHeaders as usize);
     }
 
@@ -89,10 +89,10 @@ pub fn get_proc(name: &str, dll_data: &Vec<u8>) -> FARPROC {
     }
 
     if location_delta != 0 {
-        result.is_relocated = false; 
+        result.is_relocated = false;
         // TODO
         // PerformBaseRelocation(result, locationDelta);
-     } else { 
+     } else {
         result.is_relocated = true;
     }
 
@@ -128,7 +128,7 @@ fn copy_sections(result: &MemoryModule, pe: &PeFile, nt_headers: &IMAGE_NT_HEADE
         let datap;
         unsafe {
             datap = dll_data.as_ptr() as usize + s.PointerToRawData as usize;
-            libc::memcpy(dest as *mut libc::c_void, datap as *const libc::c_void, 
+            libc::memcpy(dest as *mut libc::c_void, datap as *const libc::c_void,
                 s.SizeOfRawData as usize);
         }
 
@@ -185,10 +185,10 @@ fn build_import_table(result: &mut MemoryModule) {
 fn finalize_sections(result: &MemoryModule) {
     let image_offset;
     unsafe { image_offset = (*result.headers).OptionalHeader.ImageBase & 0xffffffff00000000; }
-    
+
     let section = image_first_section(result.headers);
 
-    let mut section_data = SectionFinalizeData { address: 0 as *mut _, 
+    let mut section_data = SectionFinalizeData { address: 0 as *mut _,
         address_aligned: 0 as *mut _, size: 0, characteristics: 0, last: false };
 
     let phys;
@@ -364,7 +364,7 @@ fn align_address_down(address: *mut std::ffi::c_void, alignment: u32) -> *mut st
 
 fn real_section_size(result: &MemoryModule, section: PIMAGE_SECTION_HEADER) -> usize {
     let mut size;
-    unsafe { 
+    unsafe {
         size = (*section).SizeOfRawData;
 
         if size == 0 {
