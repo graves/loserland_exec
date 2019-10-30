@@ -23,9 +23,22 @@ use winapi::um::winnt::{
     PVOID,
 };
 
+/// Type definition for an interface to the Windows API
+/// Usually the same as extern "C", except on Win32, in which case it's "stdcall"
+/// HINSTANCE: A handle to an instance. This is the base address of the module in memory.
+/// DWORD: A 32-bit unsigned integer. The range is 0 through 4294967295 decimal.
+/// LPVOID: A pointer to any type.
 type DllEntryProc =
     unsafe extern "stdcall" fn(hinstDLL: HINSTANCE, fdwReason: DWORD, lpReserved: LPVOID);
 
+/// The #[link] attribute is used to link to native libraries for FFI.
+/// GetProcAddress retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
+/// Parameters
+/// hModule
+/// A handle to the DLL module that contains the function or variable. The LoadLibrary, LoadLibraryEx, LoadPackagedLibrary, or GetModuleHandle function returns this handle.
+/// The GetProcAddress function does not retrieve addresses from modules that were loaded using the LOAD_LIBRARY_AS_DATAFILE flag. For more information, see LoadLibraryEx.
+/// lpProcName
+/// The function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.
 #[link(name = "kernel32")]
 #[link(name = "user32")]
 extern "stdcall" {

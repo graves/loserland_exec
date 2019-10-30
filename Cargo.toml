@@ -1,7 +1,7 @@
 [package]
 name = "loserland_exec"
 version = "0.1.0"
-authors = ["Thomas Graves"]
+authors = ["Thomas <b@o0.si>"]
 edition = "2018"
 
 [dependencies]
