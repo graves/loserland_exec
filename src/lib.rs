@@ -24,23 +24,24 @@ use winapi::um::winnt::{
 };
 
 /// Type definition for an interface to the Windows API
+///
 /// Usually the same as extern "C", except on Win32, in which case it's "stdcall"
-/// HINSTANCE: A handle to an instance. This is the base address of the module in memory.
-/// DWORD: A 32-bit unsigned integer. The range is 0 through 4294967295 decimal.
-/// LPVOID: A pointer to any type.
+///
+/// Arguments
+/// * `hinstDLL`: A handle to the DLL module. The value is the base address of the DLL. The HINSTANCE of a DLL is the same as the HMODULE of the DLL, so hinstDLL can be used in calls to functions that require a module handle.
+/// * `fdwReason`: The reason code that indicates why the DLL entry-point function is being called. See [Microsoft's DllMain entry point docs](https://docs.microsoft.com/en-us/windows/win32/dlls/dllmain) for valid values.
+/// * `lpReserved`: If fdwReason is DLL_PROCESS_ATTACH, lpvReserved is NULL for dynamic loads and non-NULL for static loads. If fdwReason is DLL_PROCESS_DETACH, lpvReserved is NULL if FreeLibrary has been called or the DLL load failed and non-NULL if the process is terminating.
 type DllEntryProc =
     unsafe extern "stdcall" fn(hinstDLL: HINSTANCE, fdwReason: DWORD, lpReserved: LPVOID);
 
-/// The #[link] attribute is used to link to native libraries for FFI.
-/// GetProcAddress retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
-/// Parameters
-/// hModule
-/// A handle to the DLL module that contains the function or variable. The LoadLibrary, LoadLibraryEx, LoadPackagedLibrary, or GetModuleHandle function returns this handle.
-/// The GetProcAddress function does not retrieve addresses from modules that were loaded using the LOAD_LIBRARY_AS_DATAFILE flag. For more information, see LoadLibraryEx.
-/// lpProcName
-/// The function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.
+// The #[link] attribute is used to link to native libraries for FFI.
 #[link(name = "kernel32")]
 #[link(name = "user32")]
+/// Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
+///
+/// Arguments
+/// * `hModule`: A handle to the DLL module that contains the function or variable. The LoadLibrary, LoadLibraryEx, LoadPackagedLibrary, or GetModuleHandle function returns this handle. The GetProcAddress function does not retrieve addresses from modules that were loaded using the LOAD_LIBRARY_AS_DATAFILE flag. For more information, see LoadLibraryEx.
+/// * `lpProcName`: The function or variable name, or the function's ordinal value. If this parameter is an ordinal value, it must be in the low-order word; the high-order word must be zero.
 extern "stdcall" {
     pub fn GetProcAddress(
         hModule: *const winapi::shared::minwindef::HINSTANCE__,
